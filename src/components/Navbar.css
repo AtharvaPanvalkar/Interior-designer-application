@@ -1,0 +1,123 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 1.2rem 2rem;
+  transition: background 0.4s, padding 0.3s, backdrop-filter 0.4s;
+}
+
+.navbar.scrolled {
+  background: rgba(10, 8, 4, 0.95);
+  backdrop-filter: blur(12px);
+  padding: 0.8rem 2rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.nav-logo {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.logo-main {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--cream);
+}
+.logo-sub {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.5rem;
+  letter-spacing: 0.4em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 0.1rem;
+  flex: 1;
+  justify-content: center;
+}
+.nav-links li a {
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(245,240,232,0.7);
+  padding: 6px 12px;
+  transition: color 0.2s;
+  position: relative;
+}
+.nav-links li a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 12px;
+  right: 12px;
+  height: 1px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transition: transform 0.25s;
+}
+.nav-links li a:hover,
+.nav-links li a.active {
+  color: var(--cream);
+}
+.nav-links li a:hover::after,
+.nav-links li a.active::after {
+  transform: scaleX(1);
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+.nav-cta {
+  font-size: 0.65rem;
+  padding: 9px 18px;
+}
+.nav-burger {
+  display: none;
+  color: var(--cream);
+}
+
+.mobile-menu {
+  display: none;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem 2rem 1.5rem;
+  background: var(--dark);
+  border-top: 1px solid var(--border);
+}
+.mobile-menu a {
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(245,240,232,0.7);
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-light);
+  transition: color 0.2s;
+}
+.mobile-menu a:hover,
+.mobile-menu a.active { color: var(--gold); }
+
+@media (max-width: 900px) {
+  .nav-links { display: none; }
+  .nav-burger { display: block; }
+  .mobile-menu { display: flex; }
+}
