@@ -19,25 +19,58 @@
 #     volumes:
 #       - "./infra:/etc/localstack/init/ready.d"
 
+# services:
+#   # 1. Your React Portfolio Container
+#   portfolio-site:
+#     container_name: my_portfolio_container
+#     build:
+#       context: .
+#       dockerfile: Dockerfile
+#     ports:
+#       - "3000:80"
+#     depends_on:
+#       - localstack
+
+#   # 2. The Free Community AWS Cloud (Pinned Version)
+#   localstack:
+#     image: localstack/localstack:3.8.0
+#     container_name: localstack_aws
+#     ports:
+#       - "4566:4566"            # Universal gateway port for AWS emulation
+#     environment:
+#       - SERVICES=s3            # We only need to spin up S3 storage
+#     volumes:
+#       - "./infra:/etc/localstack/init/ready.d" # Mounts your bucket creation automation script
+
+version: '3.8'
+
 services:
-  # 1. Your React Portfolio Container
-  portfolio-site:
+  localstack:
+    container_name: localstack_aws
+    image: localstack/localstack:3.8.0
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3
+      - AWS_DEFAULT_REGION=us-east-1
+    volumes:
+      - ./infra/init-aws.sh:/etc/localstack/init/ready.d/init-aws.sh
+    # ⚡ NEW: Regularly pings the internal S3 service port to check if it's active
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  frontend:
     container_name: my_portfolio_container
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - "3000:80"
+    # ⚡ NEW: Forces the web server to wait until the healthcheck above returns SUCCESS
     depends_on:
-      - localstack
-
-  # 2. The Free Community AWS Cloud (Pinned Version)
-  localstack:
-    image: localstack/localstack:3.8.0
-    container_name: localstack_aws
-    ports:
-      - "4566:4566"            # Universal gateway port for AWS emulation
-    environment:
-      - SERVICES=s3            # We only need to spin up S3 storage
-    volumes:
-      - "./infra:/etc/localstack/init/ready.d" # Mounts your bucket creation automation script
+      localstack:
+        condition: service_healthy
