@@ -1,6 +1,26 @@
-version: '3.8'
+# services:
+#   portfolio-site:
+#     container_name: my_portfolio_container
+#     build:
+#       context: .
+#       dockerfile: Dockerfile
+#     ports:
+#       - "3000:80"
+#     depends_on:
+#       - localstack
+
+#   localstack:
+#     image: localstack/localstack:latest
+#     container_name: localstack_aws
+#     ports:
+#       - "4566:4566"
+#     environment:
+#       - SERVICES=s3
+#     volumes:
+#       - "./infra:/etc/localstack/init/ready.d"
 
 services:
+  # 1. Your React Portfolio Container
   portfolio-site:
     container_name: my_portfolio_container
     build:
@@ -8,3 +28,16 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:80"
+    depends_on:
+      - localstack
+
+  # 2. The Free Community AWS Cloud (Pinned Version)
+  localstack:
+    image: localstack/localstack:3.8.0
+    container_name: localstack_aws
+    ports:
+      - "4566:4566"            # Universal gateway port for AWS emulation
+    environment:
+      - SERVICES=s3            # We only need to spin up S3 storage
+    volumes:
+      - "./infra:/etc/localstack/init/ready.d" # Mounts your bucket creation automation script
